@@ -9,13 +9,16 @@ function getAllMembers()
                    c.name AS nom_commune, 
                    a.name AS nom_arrondissement, 
                    u.name AS nom_udoper, 
-                   t.type AS nom_type_piece 
+                   t.type AS nom_type_piece,
+                   z.nom AS z_nom,          
+                   z.prenom AS z_prenom       
             FROM members m
             LEFT JOIN departements d ON m.idDepartement = d.idDepartements
             LEFT JOIN communes c ON m.idCommune = c.idCommunes
             LEFT JOIN arrondissements a ON m.idArrondissement = a.idArrondissements
             LEFT JOIN udopers u ON m.idUdoper = u.idUdopers
-            LEFT JOIN type_piece_identite t ON m.idTypePieceIdentite = t.id";
+            LEFT JOIN type_piece_identite t ON m.idTypePieceIdentite = t.id
+            LEFT JOIN users z ON m.user_id = z.id";
 
     $stmt = $DB->query($sql);
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -23,7 +26,6 @@ function getAllMembers()
     return $result;
 }
 
-// Fonction pour récupérer les membres enregistrés par l'utilisateur au cours des dernières 72 heures avec les valeurs des clés étrangères
 function getMembersByUser72($userId)
 {
     $DB = new connexionDB();
@@ -33,13 +35,16 @@ function getMembersByUser72($userId)
                    c.name AS nom_commune, 
                    a.name AS nom_arrondissement, 
                    u.name AS nom_udoper, 
-                   t.type AS nom_type_piece 
+                   t.type AS nom_type_piece,
+                   z.nom AS z_nom,          
+                   z.prenom AS z_prenom      
             FROM members m
             LEFT JOIN departements d ON m.idDepartement = d.idDepartements
             LEFT JOIN communes c ON m.idCommune = c.idCommunes
             LEFT JOIN arrondissements a ON m.idArrondissement = a.idArrondissements
             LEFT JOIN udopers u ON m.idUdoper = u.idUdopers
             LEFT JOIN type_piece_identite t ON m.idTypePieceIdentite = t.id
+            LEFT JOIN users z ON m.user_id = z.id
             WHERE m.user_id = :userId AND m.date_time >= NOW() - INTERVAL 72 HOUR";
 
     $stmt = $DB->query($sql, array('userId' => $userId));
@@ -138,7 +143,7 @@ function getMembersForDataTable()
             "QR Code" => "<a href='./datas/" . removeLeadingDots($member["qrCodePath"]) . "' target='_blank'>QR Code</a>",
             "Numéro de carte membre" => $member["numeroCarteMembre"],
             "Date et heure" => "Enregistré le " . formatDateFrenchWithTime($member["date_time"]),
-            "Actions" => "<button class='btn btn-sm btn-danger btn-circle' onclick='deleteMember(" . $member["idMembers"] . ")'><i class='fas fa-trash'></i></button><button class='btn btn-sm btn-success btn-circle' onclick='editMember(" . $member["idMembers"] . ")'><i class='fas fa-edit'></i></button>"
+            "Actions" => "<button class='btn btn-sm btn-danger btn-circle' onclick='deleteMember(" . $member["idMembers"] . ")'><i class='fas fa-trash'></i></button><button class='btn btn-sm btn-success btn-circle' onclick='editMember(" . $member["idMembers"] . ")'><i class='fas fa-edit'></i></button>",
         );
 
         $data[] = $rowData;
@@ -154,134 +159,10 @@ if (isset($_GET['ajax'])) {
     exit;
 }
 
+
+
 ?>
 
-<!-- DataTales Example -->
-<!-- <div class="card shadow mb-4">
-    <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Liste des membres</h6>
-    </div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Date d'adhésion</th>
-                        <th>Département</th>
-                        <th>Commune</th>
-                        <th>Arrondissement</th>
-                        <th>UDOPER</th>
-                        <th>Village</th>
-                        <th>Nom</th>
-                        <th>Prénom</th>
-                        <th>Date de naissance</th>
-                        <th>Lieu de naissance</th>
-                        <th>Sexe</th>
-                        <th>Téléphone</th>
-                        <th>Type de pièce d'identité</th>
-                        <th>Numéro de pièce</th>
-                        <th>Photo de la pièce d'identité</th>
-                        <th>Date d'expiration de la pièce d'identité</th>
-                        <th>Nombre d'ovins</th>
-                        <th>Nombre de bovins</th>
-                        <th>Nombre de caprins</th>
-                        <th>Photo du membre</th>
-                        <th>Scan de la signature</th>
-                        <th>QR Code</th>
-                        <th>Numéro de carte membre</th>
-                        <th>Date et heure</th>      
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tfoot>
-                    <tr>
-                        <th>ID</th>
-                        <th>Date d'adhésion</th>
-                        <th>Département</th>
-                        <th>Commune</th>
-                        <th>Arrondissement</th>
-                        <th>UDOPER</th>
-                        <th>Village</th>
-                        <th>Nom</th>
-                        <th>Prénom</th>
-                        <th>Date de naissance</th>
-                        <th>Lieu de naissance</th>
-                        <th>Sexe</th>
-                        <th>Téléphone</th>
-                        <th>Type de pièce d'identité</th>
-                        <th>Numéro de pièce</th>
-                        <th>Photo de la pièce d'identité</th>
-                        <th>Date d'expiration de la pièce d'identité</th>
-                        <th>Nombre d'ovins</th>
-                        <th>Nombre de bovins</th>
-                        <th>Nombre de caprins</th>
-                        <th>Photo du membre</th>
-                        <th>Scan de la signature</th>
-                        <th>QR Code</th>
-                        <th>Numéro de carte membre</th>
-                        <th>Date et heure</th>
-                        <?php if ($isAdmin) : ?>
-                            <th>Actions</th>
-                        <?php endif; ?>
-                    </tr>
-                </tfoot>
-                <tbody>
-                    <?php foreach ($members as $member) : ?>
-                        <tr>
-                            <td><?= $member["idMembers"]; ?></td>
-                            <td><?= $member["dateAdhesion"]; ?></td>
-                            <td><?= $member["nom_departement"]; ?></td>
-                            <td><?= $member["nom_commune"]; ?></td>
-                            <td><?= $member["nom_arrondissement"]; ?></td>
-                            <td><?= $member["nom_udoper"]; ?></td>
-                            <td><?= $member["village"]; ?></td>
-                            <td><?= $member["nom"]; ?></td>
-                            <td><?= $member["prenom"]; ?></td>
-                            <td><?= $member["dateNaissance"]; ?></td>
-                            <td><?= $member["lieuNaissance"]; ?></td>
-                            <td><?= $member["sexe"]; ?></td>
-                            <td><?= $member["tel"]; ?></td>
-                            <td><?= $member["nom_type_piece"]; ?></td>
-                            <td><?= $member["numeroPiece"]; ?></td>
-                            <td>
-                                <small><a href="<?= $member["photoPieceIdentite"]; ?>" target="_blank"><?= $member["photoPieceIdentite"]; ?></a></small>
-                            </td>
-                            <td><?= $member["dateExpirationPieceIdentite"]; ?></td>
-                            <td><?= $member["ovins"]; ?></td>
-                            <td><?= $member["bovins"]; ?></td>
-                            <td><?= $member["caprins"]; ?></td>
-                            <td>
-                                <small><a href="<?= $member["photoMembre"]; ?>" target="_blank"><?= $member["photoMembre"]; ?></a></small>
-                            </td>
-                            <td>
-                                <small><a href="<?= $member["signatureScan"]; ?>" target="_blank"><?= $member["signatureScan"]; ?></a></small>
-                            </td>
-                            <td>
-                                <small><a href="<?= $member["qrCodePath"]; ?>" target="_blank"><?= $member["qrCodePath"]; ?></a></small>
-                            </td>
-                            <td><?= $member["numeroCarteMembre"]; ?></td>
-                            <td><?= $member["datetime"]; ?></td>
-                            <?php if ($isAdmin) : ?>
-                                <td>
-                                    <a href="<?= $member["photoPieceIdentite"]; ?>" target="_blank" class="btn btn-primary btn-circle">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <button class="btn btn-danger btn-circle" onclick="deleteMember(<?= $member["idMembers"]; ?>)">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                    <button class="btn btn-success btn-circle" onclick="editMember(<?= $member["idMembers"]; ?>)">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                </td>
-                            <?php endif; ?>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div> -->
 
 <table id="example" class="table table-striped display compact nowrap hover cell-border" style="width:100%">
     <thead>
@@ -310,6 +191,7 @@ if (isset($_GET['ajax'])) {
             <th>QR Code</th>
             <th>Numéro de carte membre</th>
             <th>Date et heure</th>
+            <th>Enregistré par</th>
             <th>Actions</th>
 
         </tr>
@@ -349,6 +231,7 @@ if (isset($_GET['ajax'])) {
                 </td>
                 <td><?= $member["numeroCarteMembre"]; ?></td>
                 <td>Enregistré le <?= formatDateFrenchWithTime($member["date_time"]); ?></td>
+                <td> <?= $member['z_nom'] . " " . $member['z_prenom']; ?></td>
 
                 <td>
                     <small>
@@ -358,6 +241,11 @@ if (isset($_GET['ajax'])) {
                         <a class="btn btn-sm btn-success btn-circle" href="edit?id=<?= $member["idMembers"]; ?>" >
                             <i class="fas fa-edit"></i>
                         </a>
+                        <?php if($isAdmin) { ?>
+                        <a class="btn btn-sm btn-primary btn-circle" href="./card_generated/index.php?cardid=<?= $member["numeroCarteMembre"]; ?>" target="_blank">
+                            <i class="fas fa-id-card"></i>
+                        </a>
+                        <?php } ?>
                     </small>
                 </td>
 
@@ -390,6 +278,7 @@ if (isset($_GET['ajax'])) {
             <th>QR Code</th>
             <th>Numéro de carte membre</th>
             <th>Date et heure</th>
+            <th>Enregistré par</th>
             <th>Actions</th>
         </tr>
     </tfoot>

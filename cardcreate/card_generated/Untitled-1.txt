@@ -1,0 +1,10 @@
+<small>Membre depuis le : <strong><?= formatDateFrench($datas['dateAdhesion']); ?></strong></small><br>
+                                    <small>Département : <strong><?= $datas['nom_departement']; ?></strong></small><br>
+                                    <small>Commune : <strong><?= $datas['nom_commune']; ?></strong></small><br>
+                                    <small>Arrondissement : <strong><?= $datas['nom_arrondissement']; ?></strong></small><br>
+                                    <small>Village : <strong><?= $datas['village']; ?></strong></small><br>
+
+
+                                     <small>Ovins : <strong><?= $datas['ovins']; ?></strong></small> | <small>Bovins : <strong><?= $datas['bovins']; ?></strong></small> | <small>Caprins : <strong><?= $datas['caprins']; ?></strong></small><br>
+                                    <small>Téléphone : <strong><?= $datas['tel']; ?></strong></small><br>
+                                    <small>Udoper : <strong><?= $datas['nom_udoper']; ?></strong></small><br>

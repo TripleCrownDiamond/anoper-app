@@ -1,3 +1,22 @@
+<?php
+$userId = $_SESSION['user_id'];
+function isUserAdmin2($userId)
+{
+    $DB = new connexionDB();
+
+    // Effectuer une requête SQL pour récupérer le rôle de l'utilisateur
+    $sql = "SELECT admin FROM users WHERE id = :userId";
+    $stmt = $DB->query($sql, array('userId' => $userId));
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Vérifier si l'utilisateur est un administrateur (admin)
+    // Ici, on suppose que le champ "role" contient la valeur "admin" pour les administrateurs
+    return $result['admin'];
+}
+
+$isadmin = isUserAdmin2($userId);
+
+?>
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
 <!-- Sidebar - Brand -->
@@ -38,10 +57,12 @@
             <h6 class="collapse-header">Membres</h6>
             <a class="collapse-item" data-toggle="modal" data-target="#modalNouveauMembre">Nouveau</a>
             <a class="collapse-item" href="./list">Gérer</a>
-            <a class="collapse-item" href="cards.html">Cartes</a>
+           
         </div>
     </div>
 </li>
+
+<?php if($isadmin) { ?>
 
 <!-- Nav Item - Pages Collapse Menu -->
 <li class="nav-item">
@@ -53,10 +74,11 @@
     <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Utilisateurs</h6>
-            <a class="collapse-item" href="cards.html">Gérer</a>
+            <a class="collapse-item" href="./users.php">Gérer</a>
         </div>
     </div>
 </li>
+<?php } ?>
 
 <!-- Divider -->
 <hr class="sidebar-divider">

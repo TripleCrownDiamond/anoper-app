@@ -46,9 +46,7 @@ $(document).ready(function () {
             "sexe",
             "tel",
             "typePieceIdentite",
-            "numeroPieceIdentite",
             "photoPieceIdentite",
-            "dateExpirationPieceIdentite",
             "ovins",
             "bovins",
             "caprins",
@@ -112,10 +110,15 @@ $(document).ready(function () {
         function generateQRCodeData(formData) {
             const qrDataObject = {};
             for (const pair of formData.entries()) {
-                qrDataObject[pair[0]] = pair[1];
+                // Si le champ est numeroPieceIdentite et la valeur est vide, assigner NULL
+                if (pair[0] === "numeroPieceIdentite" && !pair[1]) {
+                    qrDataObject[pair[0]] = null;
+                } else {
+                    qrDataObject[pair[0]] = pair[1];
+                }
             }
             return JSON.stringify(qrDataObject);
-        }
+        }        
 
         // Si tout est valide, envoyer les données via AJAX
         if (isValid) {

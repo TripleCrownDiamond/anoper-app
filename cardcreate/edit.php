@@ -127,9 +127,7 @@ $member = getMember($memberId);
                     <!-- Content Row -->
 
                     <!-- Content Row -->
-                    <!-- Modal-->
-                    <?php require_once("./datas/new/index.php") ?>
-
+                  
                 </div>
                 <!-- /.container-fluid -->
 

@@ -81,7 +81,11 @@
 
                     <div class="mb-3">
                         <label for="sexe" class="form-label">Sexe: </label>
-                        <input type="text" name="sexe" id="sexe" class="form-control" placeholder="Préciser le sexe du membre">
+                        <select name="sexe" id="sexe" class="form-control">
+                            <option value="" selected>Choisir le sexe...</option>
+                            <option value="Homme">Homme</option>
+                            <option value="Femme">Femme</option>
+                        </select>
                         <div class="invalid-feedback d-none">Veuillez préciser le sexe du membre.</div>
                     </div>
 
@@ -101,8 +105,8 @@
 
                     <div class="mb-3">
                         <label for="numeroPieceIdentite" class="form-label">Numéro de pièce d'identité :</label>
-                        <input type="number" id="numeroPieceIdentite" name="numeroPieceIdentite" class="form-control" placeholder="Entrez le numéro de pièce d'identité">
-                        <div class="invalid-feedback d-none">Veuillez saisir un numéro de pièce d'identité valide.</div>
+                        <input type="number" id="numeroPieceIdentite" name="numeroPieceIdentite" class="form-control" placeholder="Laisser vide si vous avez choisi 'Témoignage' précédemment">
+                        
                     </div>
 
                     <div class="mb-3">

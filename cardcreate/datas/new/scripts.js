@@ -8,7 +8,7 @@ $(document).ready(function() {
         success: function(data) {
             $('#departement').append(data); // Ajouter les options de départements au select
         }
-    });
+    });  
 
     // Écouter les changements sur le premier select (département)
     $('#departement').on('change', function() {
